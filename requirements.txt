@@ -1,0 +1,4 @@
+cython
+falcon
+requests[security]
+requests_cache

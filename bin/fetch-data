@@ -1,0 +1,53 @@
+#!/usr/bin/env python
+
+import datetime
+import errno
+import json
+import os
+import sys
+
+import requests
+
+EP_URL = ('https://raw.githubusercontent.com/everypolitician/'
+          'everypolitician-data/master/data/%s/%s/ep-popolo-v1.0.json')
+
+PARENT_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+sys.path.append(PARENT_DIR)
+DATA_DIR = os.path.join(PARENT_DIR, 'data')
+
+import countries
+
+
+def strip_bare(i, j):
+    arr = [x[i] for x in data['memberships']]
+    data[j] = filter(lambda x: x['id'] in arr, data[j])
+
+
+def current_term(data):
+    for event in data['events']:
+        if 'end_date' not in event or event['end_date'] >= datetime.date.today().isoformat():
+            break
+
+    data['memberships'] = filter(lambda x: x['legislative_period_id'] == event['id'], data['memberships'])
+    strip_bare('area_id', 'areas')
+    strip_bare('on_behalf_of_id', 'organizations')
+    strip_bare('person_id', 'persons')
+    return data
+
+
+def mkdir_p(path):
+    try:
+        os.makedirs(path)
+    except OSError as exc:
+        if exc.errno == errno.EEXIST and os.path.isdir(path):
+            pass
+        else: raise
+
+
+mkdir_p(DATA_DIR)
+for country in countries.get().values():
+    url = EP_URL % (country.ep_country, country.ep_house)
+    path = os.path.join(DATA_DIR, '%s.json' % country.ep_country)
+    data = requests.get(url).json()
+    data = current_term(data)
+    json.dump(data, open(path, 'w'))
