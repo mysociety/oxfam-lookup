@@ -2,3 +2,5 @@
 *.sqlite
 .coverage
 data
+
+/conf/general.yml

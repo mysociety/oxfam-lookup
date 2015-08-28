@@ -1,9 +1,11 @@
+import StringIO
 import unittest
 
 from webtest import TestApp
 
 from app import application
 import countries
+import settings
 
 
 # TODO: This relies on the internet working
@@ -35,6 +37,18 @@ class TestCountry(unittest.TestCase):
             'constituency': u'Mackellar, New South Wales',
             'email': u'Bronwyn.Bishop.MP@aph.gov.au'
         })
+
+
+class TestConfig(unittest.TestCase):
+    def test_non_dict_config(self):
+        io = StringIO.StringIO("Test")
+        with self.assertRaises(Exception):
+            settings.load_config(io)
+
+    def test_bad_yaml(self):
+        io = StringIO.StringIO("Foo: Foo\nFoo")
+        with self.assertRaises(Exception):
+            settings.load_config(io)
 
 
 if __name__ == '__main__':
