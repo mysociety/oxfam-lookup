@@ -17,7 +17,7 @@ class BadRequestException(BaseException):
 
 class MapIt(object):
     postcode_url = '%s/postcode/%s'
-    point_url = '%s/point/4326/%s,%s'
+    point_url = '%s/point/4326/%s,%s?type=%s'
     areas_url = '%s/areas/%s'
     cache = {}
 
@@ -37,17 +37,17 @@ class MapIt(object):
         url = self.areas_url % (self.base, pc)
         data = self.get(url)
         id = data.keys().pop()
-        matches = []
-        for query in ('coverlaps', 'covered'):
-            url = '%s/area/%s/%s?type=%s' % (self.base, id, query, self.type)
-            data = self.get(url).values()
-            matches.extend(self.typed_areas(data))
-        return matches
+        url = '%s/area/%s/covered?type=%s' % (self.base, id, self.type)
+        data = self.get(url).values()
+        if data:
+            return data
+        url = '%s/area/%s/coverlaps?type=%s' % (self.base, id, self.type)
+        data = self.get(url).values()
+        return data
 
     def point_to_area(self, point):
-        url = self.point_url % (self.base, point['longitude'], point['latitude'])
-        data = self.get(url).values()
-        matches = self.typed_areas(data)
+        url = self.point_url % (self.base, point['longitude'], point['latitude'], self.type)
+        matches = self.get(url).values()
         if len(matches) != 1:
             raise BadRequestException("Should only be one result")
         return matches[0]
