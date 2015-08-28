@@ -59,7 +59,7 @@ class Country(object):
 
     def _area(self, area):
         return {
-            'id': area['codes'].get('everypolitician'),
+            'id': area['codes'].get('ocd'),
             'name': area['name']
         }
 

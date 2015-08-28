@@ -35,6 +35,15 @@ def current_term(data):
     return data
 
 
+def fixup(old_area_id, new_area_id):
+    for area in data['areas']:
+        if area['id'] == old_area_id:
+            area['id'] = new_area_id
+    for mship in data['memberships']:
+        if mship['area_id'] == old_area_id:
+            mship['area_id'] = new_area_id
+
+
 def mkdir_p(path):
     try:
         os.makedirs(path)
@@ -50,4 +59,9 @@ for country in countries.get().values():
     path = os.path.join(DATA_DIR, '%s.json' % country.ep_country)
     data = requests.get(url).json()
     data = current_term(data)
+
+    # Fixup
+    fixup('ocd-division/country:au/federal_electorate:fraser', 'ocd-division/country:au/territory:act/federal_electorate:fraser')
+    fixup('ocd-division/country:au/state:nsw/federal_electorate:watsno', 'ocd-division/country:au/state:nsw/federal_electorate:watson')
+
     json.dump(data, open(path, 'w'))
