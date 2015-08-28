@@ -41,11 +41,11 @@ class TestURLs(unittest.TestCase):
         data = json.loads(resp.body)
         self.assertEquals(data, {"representative": {
             "name": "Nusrat Ghani",
-            "twitter": "Nus_Ghani",
+            "twitter": "https://twitter.com/nus_ghani",
             "facebook": None,
             "party": "Conservative",
             "constituency": "Wealden",
-            "email": None
+            "email": 'nusrat.ghani.mp@parliament.uk',
         }})
 
     @patch('services.country.session')
