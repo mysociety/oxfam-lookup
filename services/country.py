@@ -25,7 +25,11 @@ class Country(object):
 
     def __init__(self):
         self.mapit = MapIt(self)
-        self.popolo = Popolo.load(open(os.path.join(DATA_DIR, self.ep_country + '.json')))
+        try:
+            self.popolo = Popolo.load(open(os.path.join(DATA_DIR, self.ep_country + '.json')))
+        except IOError:
+            # Assume it's because it doesn't exist yet
+            pass
 
     def geocode(self, addr):
         url = self.bing_url
