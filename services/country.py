@@ -1,5 +1,10 @@
 import os
 
+import falcon
+from requests_cache import CachedSession
+
+session = CachedSession(cache_name='bing', expire_after=86400)
+
 from .popolo import Popolo
 from .mapit import MapIt
 
@@ -16,9 +21,37 @@ class NotFoundException(BaseException):
 
 
 class Country(object):
+    bing_url = "http://dev.virtualearth.net/REST/v1/Locations"
+
     def __init__(self):
         self.mapit = MapIt(self)
         self.popolo = Popolo.load(open(os.path.join(DATA_DIR, self.ep_country + '.json')))
+
+    def geocode(self, addr):
+        url = self.bing_url
+        params = {
+            'query': addr,
+            'key': self.bing_key,
+            'userMapView': self.geocoding_bounding_box,
+        }
+        url += falcon.to_query_str(params)
+
+        data = session.get(url).json()
+        if data['statusCode'] != 200:
+            return []
+
+        points = []
+        for result in data['resourceSets'][0]['resources']:
+            if result['address']['countryRegion'] != self.geocoding_country:
+                continue
+            lat, lon = result['point']['coordinates']
+            points.append({
+                'address': result['name'],
+                'latitude': lat,
+                'longitude': lon,
+            })
+
+        return points
 
     def _area(self, area):
         return {
@@ -34,6 +67,10 @@ class Country(object):
             matches = self.mapit.postcode_point_to_area(pc)
         matches = [self._area(m) for m in matches]
         return matches
+
+    def point_to_area(self, point):
+        area = self.mapit.point_to_area(point)
+        return self._area(area)
 
     def area_to_rep(self, area):
         if area['id']:
