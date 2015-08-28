@@ -1,0 +1,12 @@
+WSGIDaemonProcess example.com \
+    user=exampleuser \
+    group=examplegroup \
+    processes=5 \
+    threads=1 \
+    display-name=example.com \
+    home=/data/vhost/example.com/oxfam-lookup
+    python-path=/data/vhost/example.com/oxfam-lookup:/data/vhost/example.com/virtualenv/lib/python2.7/site-packages
+
+WSGIProcessGroup example.com
+
+WSGIScriptAlias / /data/vhost/example.com/oxfam-lookup/app.py
