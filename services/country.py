@@ -81,10 +81,14 @@ class Country(object):
             area = self.popolo.area_by_id(area['id'])
         else:
             area = self.popolo.area_by_name(area['name'])
+
         try:
-            mship = self.popolo.membership(area=area, period=self.popolo.current_period)
-        except KeyError:
+            mship = self.popolo.current_membership(area=area, period=self.popolo.current_period)
+        except (KeyError, IndexError):
+            mship = None
+        if mship is None:
             raise NotFoundException("No membership found")
+
         person = self.popolo.person(id=mship['person_id'])
         party = self.popolo.org(id=mship['on_behalf_of_id'])
         return {

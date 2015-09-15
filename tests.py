@@ -188,15 +188,45 @@ class TestCountry(unittest.TestCase):
 class TestLookup(unittest.TestCase):
     def setUp(self):
         self.au = countries.AU()
-        self.au.popolo.memberships = {}
 
     def test_bad_area(self):
         with self.assertRaises(falcon.HTTPInternalServerError):
             Lookup().area_to_rep(self.au, None)
 
     def test_no_memberships(self):
+        self.au.popolo.memberships = {}
         with self.assertRaises(falcon.HTTPNotFound):
             Lookup().area_to_rep(self.au, {'id': OCD_ID % 'mackellar'})
+
+    def test_multiple_memberships(self):
+        area_id = OCD_ID % 'mackellar'
+        term_id = self.au.popolo.current_period['id']
+        self.au.popolo.memberships[term_id][area_id] = [
+            {"on_behalf_of_id": "party/liberal_party",
+             "person_id": "person/10043",
+             "start_date": "2015-08-02",
+             "end_date": "2015-09-01",
+             },
+            {"on_behalf_of_id": "party/liberal_party",
+             "person_id": "person/10046",
+             "start_date": "2015-09-02",
+             },
+        ]
+        data = Lookup().area_to_rep(self.au, {'id': area_id})
+        self.assertEqual(data['representative']['name'], 'Bronwyn Bishop')
+
+    def test_out_of_date_eemberships(self):
+        area_id = OCD_ID % 'mackellar'
+        term_id = self.au.popolo.current_period['id']
+        self.au.popolo.memberships[term_id][area_id] = [
+            {"on_behalf_of_id": "party/liberal_party",
+             "person_id": "person/10043",
+             "start_date": "2015-08-02",
+             "end_date": "2015-09-01",
+             },
+        ]
+        with self.assertRaises(falcon.HTTPNotFound):
+            Lookup().area_to_rep(self.au, {'id': area_id})
 
 
 class TestConfig(unittest.TestCase):
