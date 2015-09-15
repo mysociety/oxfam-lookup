@@ -1,0 +1,23 @@
+notifications:
+  email: false
+  irc:
+    channels:
+      - "irc.mysociety.org#activity"
+    use_notice: true
+
+sudo: false
+
+language: python
+
+install:
+  - pip install -r requirements.txt
+  - pip install -r requirements-test.txt
+  - cp conf/general.yml-example conf/general.yml
+  - bin/fetch-data
+
+cache:
+  directories:
+    - $HOME/.cache/pip
+
+script:
+  - bin/run-tests
