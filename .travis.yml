@@ -10,6 +10,7 @@ sudo: false
 language: python
 
 install:
+  - pip install Cython
   - pip install -r requirements.txt
   - pip install -r requirements-test.txt
   - cp conf/general.yml-example conf/general.yml
@@ -18,6 +19,8 @@ install:
 cache:
   directories:
     - $HOME/.cache/pip
+    - $HOME/virtualenv/python2.7.9/lib/python2.7/site-packages
+    - $HOME/virtualenv/python2.7.9/bin
 
 script:
   - bin/run-tests
