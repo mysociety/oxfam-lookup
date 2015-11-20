@@ -8,6 +8,7 @@ import falcon
 import flake8.main
 
 from app import application, Lookup
+from services.popolo import Person
 import countries
 import settings
 
@@ -207,6 +208,10 @@ class TestLookup(unittest.TestCase):
     def test_multiple_memberships(self):
         area_id = OCD_ID % 'mackellar'
         term_id = self.au.popolo.current_period['id']
+        self.au.popolo.persons['person/10046'] = Person({
+            'name': 'Bronwyn Bishop'
+        })
+
         self.au.popolo.memberships[term_id][area_id] = [
             {"on_behalf_of_id": "party/liberal_party",
              "person_id": "person/10043",
