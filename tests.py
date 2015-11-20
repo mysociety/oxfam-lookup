@@ -29,6 +29,12 @@ class TestURLs(unittest.TestCase):
         self.app.get('/postcode/UK/B302ZZ', status=404)
 
     @patch('services.mapit.session')
+    def test_unknown_au_postcode(self, mapit_session):
+        mapit_session.get.return_value.json.return_value = {}
+        mapit_session.get.return_value.status_code = 200
+        self.app.get('/postcode/AU/B302ZZ', status=404)
+
+    @patch('services.mapit.session')
     def test_invalid_postcode(self, mapit_session):
         mapit_session.get.return_value.json.return_value = {'code': 400, 'error': 'Postcode invalid'}
         mapit_session.get.return_value.status_code = 400

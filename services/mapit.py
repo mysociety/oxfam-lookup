@@ -36,6 +36,8 @@ class MapIt(object):
     def postcode_area_to_area(self, pc):
         url = self.areas_url % (self.base, pc)
         data = self.get(url)
+        if not data:
+            raise NotFoundException('No Postcode matches the given query.')
         id = data.keys().pop()
         url = '%s/area/%s/covered?type=%s' % (self.base, id, self.type)
         data = self.get(url).values()
