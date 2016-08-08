@@ -111,6 +111,7 @@ class TestURLs(unittest.TestCase):
             "email": 'nusrat.ghani.mp@parliament.uk',
         }
         resp = self.app.get('/address/UK/Cannon+Street+Manchester')
+        self.assertEquals(resp.headers['Access-Control-Allow-Origin'], '*')
         self.assertEquals(resp.json, {"representative": area_to_rep.return_value})
 
     @patch('services.country.session')

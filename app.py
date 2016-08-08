@@ -58,6 +58,7 @@ class JSONOutput(object):
     def process_response(self, req, resp, resource):
         if 'result' not in req.context:
             return
+        resp.set_header('Access-Control-Allow-Origin', '*')
         resp.body = json.dumps(req.context['result'])
 
 
