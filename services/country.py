@@ -3,11 +3,10 @@ import os
 import falcon
 from requests_cache import CachedSession
 
-session = CachedSession(cache_name='bing', expire_after=86400)
-
 from .popolo import Popolo
 from .mapit import MapIt
 
+session = CachedSession(cache_name='bing', expire_after=86400)
 
 DATA_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'data'))
 

@@ -4,7 +4,7 @@ import unittest
 from mock import patch, MagicMock
 from webtest import TestApp
 import falcon
-import flake8.main
+import flake8.main.application
 
 from app import application, Lookup
 from services.popolo import Person
@@ -251,7 +251,8 @@ class TestConfig(unittest.TestCase):
 
 class TestFlake8(unittest.TestCase):
     def test_flake8(self):
-        flake8.main.main()
+        app = flake8.main.application.Application()
+        app.run()
 
 
 if __name__ == '__main__':
