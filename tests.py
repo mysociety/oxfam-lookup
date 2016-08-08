@@ -1,4 +1,3 @@
-import json
 import StringIO
 import unittest
 
@@ -112,8 +111,7 @@ class TestURLs(unittest.TestCase):
             "email": 'nusrat.ghani.mp@parliament.uk',
         }
         resp = self.app.get('/address/UK/Cannon+Street+Manchester')
-        data = json.loads(resp.body)
-        self.assertEquals(data, {"representative": area_to_rep.return_value})
+        self.assertEquals(resp.json, {"representative": area_to_rep.return_value})
 
     @patch('services.country.session')
     @patch('services.mapit.session')
@@ -156,8 +154,7 @@ class TestURLs(unittest.TestCase):
             "email": "andrew.leigh.mp@aph.gov.au"
         }
         resp = self.app.get('/address/AU/Cannon+Street+Manchester')
-        data = json.loads(resp.body)
-        self.assertEqual(data, {"representative": area_to_rep.return_value})
+        self.assertEqual(resp.json, {"representative": area_to_rep.return_value})
 
     @patch('services.country.session')
     def test_multiple_address(self, session):
@@ -173,8 +170,7 @@ class TestURLs(unittest.TestCase):
             ]}],
         }
         resp = self.app.get('/address/AU/Cannon+Street+Manchester')
-        data = json.loads(resp.body)
-        self.assertEqual(data, {"results": [
+        self.assertEqual(resp.json, {"results": [
             {"latitude": -35.279651, "longitude": 149.138427, "address": "Cannon Street, Manchester"},
             {"latitude": -35.279651, "longitude": 149.138427, "address": "Cannon Street, Adelaide"}
         ]})
