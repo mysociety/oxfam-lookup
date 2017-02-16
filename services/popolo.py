@@ -51,7 +51,8 @@ class Popolo(Data):
             mships.setdefault(m['legislative_period_id'], {}).setdefault(m['area_id'], []).append(m)
         self.memberships = mships
         for e in self.events:
-            if 'end_date' not in e or e['end_date'] >= self.today:
+            if 'start_date' in e and e['start_date'] <= self.today and (
+              'end_date' not in e or e['end_date'] >= self.today):
                 self.current_period = e
 
     def current_membership(self, area=None, period=None, date=None):
