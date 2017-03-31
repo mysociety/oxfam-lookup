@@ -1,9 +1,5 @@
 notifications:
   email: false
-  irc:
-    channels:
-      - "irc.mysociety.org#activity"
-    use_notice: true
 
 sudo: false
 
