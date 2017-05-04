@@ -76,10 +76,16 @@ class Country(object):
         return self._area(area)
 
     def area_to_rep(self, area):
-        if area['id']:
-            area = self.popolo.area_by_id(area['id'])
-        else:
-            area = self.popolo.area_by_name(area['name'])
+        try:
+            if area['id']:
+                area = self.popolo.area_by_id(area['id'])
+            else:
+                area = self.popolo.area_by_name(area['name'])
+        except KeyError:
+            area = None
+        if area is None:
+            # No memberships, so areas stripped by fetch-data
+            raise NotFoundException("No membership found")
 
         try:
             mship = self.popolo.current_membership(area=area, period=self.popolo.current_period)
