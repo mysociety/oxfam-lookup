@@ -22,10 +22,14 @@ class NotFoundException(BaseException):
 class Country(object):
     bing_url = "http://dev.virtualearth.net/REST/v1/Locations"
 
+    @property
+    def data_fp(self):
+        return open(os.path.join(DATA_DIR, self.ep_country + '.json'))
+
     def __init__(self):
         self.mapit = MapIt(self)
         try:
-            self.popolo = Popolo.load(open(os.path.join(DATA_DIR, self.ep_country + '.json')))
+            self.popolo = Popolo.load(self.data_fp)
         except IOError:
             # Assume it's because it doesn't exist yet
             pass
